@@ -309,25 +309,25 @@
                 </section>
             </section>
             <section class="col-12 col-lg col-xl ms-0 bg-light">
-                <form>
+                <form id="customerForm" action="customer" method="post">
                     <div class="mb-3">
                         <label class="form-label" for="cid">Customer Id</label>
-                        <input class="form-control txtInput" id="cid" placeholder="C00-001" type="text">
+                        <input class="form-control txtInput" id="cid" placeholder="C00-001" type="text" name="customerID">
                         <p><small id="errTxtCusId" class="text-danger"></small></p>
                     </div>
                     <div class="mb-3">
                         <label class="form-label" for="newCustName">Name</label>
-                        <input class="form-control txtInput" id="newCustName" placeholder="Kamal" type="text">
+                        <input class="form-control txtInput" id="newCustName" placeholder="Kamal" type="text" name="customerName">
                         <p><small id="errTxtCusName" class="text-danger"></small></p>
                     </div>
                     <div class="mb-3">
                         <label class="form-label" for="newCustAddress">Address</label>
-                        <input class="form-control txtInput" id="newCustAddress" placeholder="Galle" type="text">
+                        <input class="form-control txtInput" id="newCustAddress" placeholder="Galle" type="text" name="customerAddress">
                         <p><small id="errTxtCusAddress" class="text-danger"></small></p>
                     </div>
                     <div class="mb-3">
                         <label class="form-label" for="newCustSalary">Salary</label>
-                        <input class="form-control txtInput" id="newCustSalary" placeholder="50000.00" type="text">
+                        <input class="form-control txtInput" id="newCustSalary" placeholder="50000.00" type="text" name="customerSalary">
                         <p><small id="errTxtCusSalary" class="text-danger"></small></p>
                     </div>
                     <div class="d-flex justify-content-center p-3">
@@ -339,7 +339,7 @@
             </section>
 
             <section class="container-fluid row mt-4 ms-1 bg-light">
-                <table id="tblCust" class="table table-sm table-hover col">
+                <table id="tblCustomer" class="table table-sm table-hover col">
                     <thead class="bg-info bg-opacity-25">
                     <tr>
                         <th scope="col">ID</th>
@@ -348,7 +348,14 @@
                         <th scope="col">Salary</th>
                     </tr>
                     </thead>
-                    <tbody></tbody>
+                    <tbody id="tblCust">
+                      <tr>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                      </tr>
+                    </tbody>
                 </table>
             </section>
         </section>
@@ -469,29 +476,90 @@
         $(".home").css('display', 'none');
     });
 
+    loadAllCustomers();
+
+
+
     /*Customer starts*/
     /*Save Customer*/
     $("#btnSaveCustomer").prop('disabled',true);
+
     $("#btnSaveCustomer").click(function () {
-        $("#tblCust>tbody>tr").off("click");
+        var data= $("#customerForm").serialize();
+        console.log(data);
 
-        let cusId= $("#cid").val();
-        let cusName = $("#newCustName").val();
-        let cusAddress = $("#newCustAddress").val();
-        let cusSalary = $("#newCustSalary").val();
-
-        var customerDTO = new CustomerDTO(cusId,cusName,cusAddress,cusSalary);
-
-        let response = confirm("Are you sure you want to Add this Customer?");
-        if (response){
-            saveCustomer(customerDTO);
-            clearCusForm();
-            clearTable();
-            loadAllCustomers();
-            bindTableEvents();
-            loadCustIds();
-        }
+        $.ajax({
+            url:"customer",
+            method:"POST",
+            data:data,// if we send data with the request
+            success: function (res) {
+                if (res.status == 200) {
+                    alert(res.message);
+                    loadAllCustomers();
+                } else {
+                    alert(res.data);
+                }
+            },
+            error: function (ob, textStatus, error) {
+                alert(textStatus);
+                console.log(ob.responseText);
+            }
+        });
     });
+
+    function bindCustomerTableEvents() {
+        $("#tblCustomer>tbody>tr").click(function () {
+            let selectedRow =$(this);
+            let cusId = $(this).children(":nth-child(1)").text();
+            let cusName = $(this).children(":nth-child(2)").text();
+            let cusAddress = $(this).children(":nth-child(3)").text();
+            let cusSalary = $(this).children(":nth-child(4)").text();
+
+            console.log(cusId ,cusName ,cusAddress ,cusSalary);
+
+            $("#cid").val(cusId);
+            $("#newCustName").val(cusName);
+            $("#newCustAddress").val(cusAddress);
+            $("#newCustSalary").val(cusSalary);
+        });
+    }
+
+    function loadAllCustomers() {
+        console.log("@loadCustomers")
+        $("#tblCustomer>tbody").empty();
+        $.ajax({
+            url: "customer",
+            method: "GET",
+            // dataType:"json", // please convert the response into JSON
+            success: function (resp) {
+                console.log(typeof resp);
+                for (const customer of resp.data) {
+                    let row = `<tr><td>${customer.id}</td><td>${customer.name}</td><td>${customer.address}</td><td>${customer.salary}</td></tr>`;
+                    $("#tblCustomer").append(row);
+                }
+                /* $("#tblCustomer>tbody>tr").click(function () {
+                     let selectedRow =$(this);
+                     let cusId = $(this).children(":nth-child(1)").text();
+                     let cusName = $(this).children(":nth-child(2)").text();
+                     let cusAddress = $(this).children(":nth-child(3)").text();
+                     let cusSalary = $(this).children(":nth-child(4)").text();
+
+                     console.log(cusId ,cusName ,cusAddress ,cusSalary);
+
+                     $("#cid").val(cusId);
+                     $("#newCustName").val(cusName);
+                     $("#newCustAddress").val(cusAddress);
+                     $("#newCustSalary").val(cusSalary);
+                 });*/
+                bindCustomerTableEvents();
+            }
+        });
+    }
+
+    function saveCustomer() {
+        /* customerDB.push(dto);*/
+
+    }
 
 
     /*Customer Update Starts*/
@@ -617,6 +685,8 @@
         }
     });
     /*customer form key events ends*/
+
+
     /*Customer ends*/
 
     /*Item starts*/
@@ -1014,7 +1084,7 @@
 
 </script>
 <script src="db/DB.js"></script>
-<script src="controller/CustomerController.js"></script>
+<!--<script src="controller/CustomerController.js"></script>-->
 <script src="controller/ItemController.js"></script>
 <script src="controller/OrderController.js"></script>
 <script src="controller/OrderDetailController.js"></script>

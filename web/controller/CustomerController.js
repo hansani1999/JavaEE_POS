@@ -1,6 +1,26 @@
-function saveCustomer(dto) {
-    customerDB.push(dto);
-}
+/*function saveCustomer(dto) {
+   /!* customerDB.push(dto);*!/
+    var data= $("#customerForm").serialize();
+    console.log(data);
+
+    $.ajax({
+        url:"customer",
+        method:"POST",
+        data:data,// if we send data with the request
+        success: function (res) {
+            if (res.status == 200) {
+                alert(res.message);
+                loadAllCustomers();
+            } else {
+                alert(res.data);
+            }
+        },
+        error: function (ob, textStatus, error) {
+            alert(textStatus);
+            console.log(ob.responseText);
+        }
+    });
+}*/
 
 function updateCustomer(dto){
     for (var customer of customerDB){
@@ -13,16 +33,16 @@ function updateCustomer(dto){
     }
 }
 
-function bindTableEvents(){
-    /*get Customer to Form*/
-    $("#tblCust>tbody>tr").click(function () {
+/*function bindTableEvents(){
+    /!*get Customer to Form*!/
+    $("#tblCustomer>tbody>tr").click(function () {
         let selectedRow =$(this);
         let cusId = $(this).children(":nth-child(1)").text();
         let cusName = $(this).children(":nth-child(2)").text();
         let cusAddress = $(this).children(":nth-child(3)").text();
         let cusSalary = $(this).children(":nth-child(4)").text();
 
-        //console.log(cusId ,cusName ,cusAddress ,cusSalary);
+        console.log(cusId ,cusName ,cusAddress ,cusSalary);
 
         $("#cid").val(cusId);
         $("#newCustName").val(cusName);
@@ -30,7 +50,7 @@ function bindTableEvents(){
         $("#newCustSalary").val(cusSalary);
     });
 
-    /*Delete Customer Starts*/
+    /!*Delete Customer Starts*!/
     $("#tblCust>tbody>tr").dblclick(function () {
         var selctedRow = $(this);
         let cusId = $(this).children(":nth-child(1)").text();
@@ -53,8 +73,8 @@ function bindTableEvents(){
 
         }
     });
-    /*Delete Customer Ends*/
-}
+    /!*Delete Customer Ends*!/
+}*/
 
 function deleteCustomer(cusId) {
     for (var customer of customerDB){
@@ -73,12 +93,7 @@ function searchCustomer(cusId) {
     }
 }
 
-function loadAllCustomers() {
-    for (var customer of customerDB){
-        let row = `<tr><td>${customer.getCustomerId()}</td><td>${customer.getCustomerName()}</td><td>${customer.getAddress()}</td><td>${customer.getSalary()}</td></tr>`;
-        $("#tblCust").append(row);
-    }
-}
+
 
 function getAllCustomers() {
     let custIds = new Array();
