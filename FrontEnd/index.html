@@ -309,25 +309,25 @@
                 </section>
             </section>
             <section class="col-12 col-lg col-xl ms-0 bg-light">
-                <form>
+                <form id="customerForm" action="customer" method="post">
                     <div class="mb-3">
                         <label class="form-label" for="cid">Customer Id</label>
-                        <input class="form-control txtInput" id="cid" placeholder="C00-001" type="text">
+                        <input class="form-control txtInput" id="cid" placeholder="C00-001" type="text" name="customerID">
                         <p><small id="errTxtCusId" class="text-danger"></small></p>
                     </div>
                     <div class="mb-3">
                         <label class="form-label" for="newCustName">Name</label>
-                        <input class="form-control txtInput" id="newCustName" placeholder="Kamal" type="text">
+                        <input class="form-control txtInput" id="newCustName" placeholder="Kamal" type="text" name="customerName">
                         <p><small id="errTxtCusName" class="text-danger"></small></p>
                     </div>
                     <div class="mb-3">
                         <label class="form-label" for="newCustAddress">Address</label>
-                        <input class="form-control txtInput" id="newCustAddress" placeholder="Galle" type="text">
+                        <input class="form-control txtInput" id="newCustAddress" placeholder="Galle" type="text" name="customerAddress">
                         <p><small id="errTxtCusAddress" class="text-danger"></small></p>
                     </div>
                     <div class="mb-3">
                         <label class="form-label" for="newCustSalary">Salary</label>
-                        <input class="form-control txtInput" id="newCustSalary" placeholder="50000.00" type="text">
+                        <input class="form-control txtInput" id="newCustSalary" placeholder="50000.00" type="text" name="customerSalary">
                         <p><small id="errTxtCusSalary" class="text-danger"></small></p>
                     </div>
                     <div class="d-flex justify-content-center p-3">
@@ -475,6 +475,7 @@
     /*Customer starts*/
     /*Save Customer*/
     $("#btnSaveCustomer").prop('disabled',true);
+
     $("#btnSaveCustomer").click(function () {
         $("#tblCust>tbody>tr").off("click");
 
@@ -483,24 +484,15 @@
         let cusAddress = $("#newCustAddress").val();
         let cusSalary = $("#newCustSalary").val();
 
-        var customerDTO = new CustomerDTO(cusId,cusName,cusAddress,cusSalary);
-
-        let response = confirm("Are you sure you want to Add this Customer?");
-        if (response){
-            saveCustomer(customerDTO);
-            clearCusForm();
-            clearTable();
-            loadAllCustomers();
-            bindTableEvents();
-            loadCustIds();
-        }
+        saveCustomer();
     });
 
 
 
     /*Customer Update Starts*/
     $("#btnUpdate").on('click',function () {
-        let cusId= $("#cid").val();
+        updateCustomer();
+        /*let cusId= $("#cid").val();
         let cusName = $("#newCustName").val();
         let cusAddress = $("#newCustAddress").val();
         let cusSalary = $("#newCustSalary").val();
@@ -515,13 +507,16 @@
             loadAllCustomers();
             bindTableEvents();
             loadCustIds();
-        }
+        }*/
     });
     /*Customer Update Ends*/
 
     /*Customer Search Starts*/
     $("#btnSearchCust").click(function () {
-        var searchId = $("#txtSearchCust").val();
+        var searchId = $("#cid").val();
+
+        searchCustomer(searchId);
+        /*var searchId = $("#txtSearchCust").val();
 
         var response = searchCustomer(searchId);
 
@@ -532,9 +527,17 @@
             $("#newCustSalary").val(response.getSalary());
         }else {
             alert("Customer Not Found");
-        }
+        }*/
     });
     /*Customer Search Ends*/
+
+    /*Customer Delete starts*/
+    $("#btnDeleteCustomer").click(function () {
+        let cusId = $("cid").val();
+
+        deleteCustomer(cusId);
+    });
+    /*Customer Delete ends*/
 
     $("#btnClearCus").click(function () {
         clearCusForm();

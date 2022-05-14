@@ -1,26 +1,66 @@
-function saveCustomer(dto) {
-    customerDB.push(dto);
+function saveCustomer() {
+    var data= $("#customerForm").serialize();
+    console.log(data);
+
+    $.ajax({
+        url:"http://localhost:8080/pos/customer",
+        method:"POST",
+        data:data,// if we send data with the request
+        beforeSend:function(){
+            return confirm("Are you sure you want to add this customer?");
+        },
+        success: function (res) {
+            if (res.status == 200) {
+                alert(res.message);
+                loadAllCustomers();
+            } else {
+                alert(res.data);
+            }
+        },
+        error: function (ob, textStatus, error) {
+            alert(textStatus);
+            console.log(ob.responseText);
+        }
+    });
 }
 
-function updateCustomer(dto){
-    for (var customer of customerDB){
-        if (customer.getCustomerId()== dto.getCustomerId()){
-            customer.setCustomerId(dto.getCustomerId());
-            customer.setCustomerName(dto.getCustomerName());
-            customer.setAddress(dto.getAddress());
-            customer.setSalary(dto.getSalary());
-        }
+function updateCustomer(){
+    var cusObject = {
+        id:$("#cid").val(),
+        name:$("#newCustName").val(),
+        address:$("#newCustAddress").val(),
+        salary:$("#newCustSalary").val()
     }
+    $.ajax({
+        url: "http://localhost:8080/pos/customer",
+        method: "PUT",
+        contentType:"application/json",
+        data:JSON.stringify(cusObject),
+        beforeSend: function(){
+          return confirm("Are you sure you want to Update this Customer?");
+        },
+        success: function (res) {
+            if (res.status==200) {
+                alert(res.message);
+                loadAllCustomers();
+            }else if(res.salary==400){
+                alert(res.data)
+            }else {
+                alert(res.data);
+            }
+
+        },
+        error: function (ob, textStatus, error) {
+            alert(textStatus);
+            console.log(ob.responseText);
+        }
+    });
 }
 
 function loadAllCustomers() {
-    /*for (var customer of customerDB){
-        let row = `<tr><td>${customer.getCustomerId()}</td><td>${customer.getCustomerName()}</td><td>${customer.getAddress()}</td><td>${customer.getSalary()}</td></tr>`;
-        $("#tblCust").append(row);
-    }*/
     $("#tblCust>tbody").empty();
     $.ajax({
-        url: "http://localhost:8080/pos/customer",
+        url: "http://localhost:8080/pos/customer?option=GETALL",
         method:"GET",
         // dataType:"json", // please convert the response into JSON
         success: function (resp) {
@@ -32,7 +72,7 @@ function loadAllCustomers() {
             }
             getCustomerToForm();
         }
-    })
+    });
 }
 
 function getCustomerToForm(){
@@ -94,23 +134,55 @@ function bindTableEvents(){
 }
 
 function deleteCustomer(cusId) {
-    for (var customer of customerDB){
-        if (customer.getCustomerId()==cusId){
-            var index = customerDB.indexOf(customer);
-            customerDB.splice(index,1);
+    let customerID = $("#cid").val();
+
+    $.ajax({
+        url: "http://localhost:8080/pos/customer?CusID=" + customerID,
+        method: "DELETE",
+        //data:data,// application/x-www-form-urlencoded
+        beforeSend:function(){
+            return confirm("Are you sure you want to DELETE this customer?");
+        },
+        success: function (res) {
+            if (res.status==200) {
+                console.log(typeof res)
+                alert(res.message);
+                loadAllCustomers();
+            }else if (res.status==400){
+                alert(res.data);
+            }else {
+                alert(res.data);
+            }
+
+        },
+        error: function (ob, textStatus, error) {
+            alert(textStatus);
+            console.log(ob.responseText);
         }
-    }
+    });
 }
 
 function searchCustomer(cusId) {
-    for (var customer of customerDB){
-        if (customer.getCustomerId()==cusId){
-            return customer;
+
+    $.ajax({
+        url: "http://localhost:8080/pos/customer?option=SEARCH&cusID="+cusId,
+        method:"GET",
+        // dataType:"json", // please convert the response into JSON
+        success: function (resp) {
+            if (resp.status==200){
+                for (const customer of resp.data) {
+                    console.log(customer.id ,customer.name)
+                    $("#cid").val(customer.id);
+                    $("#newCustName").val(customer.name);
+                    $("#newCustAddress").val(customer.address);
+                    $("#newCustSalary").val(customer.salary);
+                }
+            }else {
+             alert(resp.message);
+            }
         }
-    }
+    });
 }
-
-
 
 function getAllCustomers() {
     let custIds = new Array();
