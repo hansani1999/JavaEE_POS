@@ -433,6 +433,7 @@
 </main>
 <script src="assets/JQuery/jquery-3.6.0.min.js"></script>
 <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+<script src="controller/CustomerController.js"></script>
 <script>
     /*Initial state*/
     $(".orders").css('display', 'none');
@@ -469,6 +470,8 @@
         $(".home").css('display', 'none');
     });
 
+    loadAllCustomers();
+
     /*Customer starts*/
     /*Save Customer*/
     $("#btnSaveCustomer").prop('disabled',true);
@@ -492,6 +495,7 @@
             loadCustIds();
         }
     });
+
 
 
     /*Customer Update Starts*/
@@ -1014,7 +1018,7 @@
 
 </script>
 <script src="db/DB.js"></script>
-<script src="controller/CustomerController.js"></script>
+
 <script src="controller/ItemController.js"></script>
 <script src="controller/OrderController.js"></script>
 <script src="controller/OrderDetailController.js"></script>

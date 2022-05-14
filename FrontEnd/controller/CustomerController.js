@@ -13,6 +13,43 @@ function updateCustomer(dto){
     }
 }
 
+function loadAllCustomers() {
+    /*for (var customer of customerDB){
+        let row = `<tr><td>${customer.getCustomerId()}</td><td>${customer.getCustomerName()}</td><td>${customer.getAddress()}</td><td>${customer.getSalary()}</td></tr>`;
+        $("#tblCust").append(row);
+    }*/
+    $("#tblCust>tbody").empty();
+    $.ajax({
+        url: "http://localhost:8080/pos/customer",
+        method:"GET",
+        // dataType:"json", // please convert the response into JSON
+        success: function (resp) {
+            console.log(typeof resp);
+            for (const customer of resp.data) {
+                console.log(customer.id ,customer.name)
+                let row=`<tr><td>${customer.id}</td><td>${customer.name}</td><td>${customer.address}</td><td>${customer.salary}</td></tr>`;
+                $("#tblCust").append(row);
+            }
+            getCustomerToForm();
+        }
+    })
+}
+
+function getCustomerToForm(){
+    $("#tblCust>tbody>tr").click(function () {
+        console.log("Customer selected")
+        let cusId = $(this).children(":nth-child(1)").text();
+        let cusName = $(this).children(":nth-child(2)").text();
+        let cusAddress = $(this).children(":nth-child(3)").text();
+        let cusSalary = $(this).children(":nth-child(4)").text();
+
+        $("#cid").val(cusId);
+        $("#newCustName").val(cusName);
+        $("#newCustAddress").val(cusAddress);
+        $("#newCustSalary").val(cusSalary);
+    });
+}
+
 function bindTableEvents(){
     /*get Customer to Form*/
     $("#tblCust>tbody>tr").click(function () {
@@ -73,12 +110,7 @@ function searchCustomer(cusId) {
     }
 }
 
-function loadAllCustomers() {
-    for (var customer of customerDB){
-        let row = `<tr><td>${customer.getCustomerId()}</td><td>${customer.getCustomerName()}</td><td>${customer.getAddress()}</td><td>${customer.getSalary()}</td></tr>`;
-        $("#tblCust").append(row);
-    }
-}
+
 
 function getAllCustomers() {
     let custIds = new Array();
