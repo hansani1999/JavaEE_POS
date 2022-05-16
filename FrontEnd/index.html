@@ -389,26 +389,26 @@
                 </section>
             </section>
             <section class="col-12 col-lg col-xl ms-0 me-1 mb-2 bg-primary bg-opacity-25">
-                <form>
+                <form id="itemForm" action="item" method="post">
                     <div class="mb-3">
                         <label class="form-label" for="itemCode">Item Code</label>
-                        <input class="form-control txtItemInput" id="itemCode" placeholder="I00-001" type="text">
+                        <input class="form-control txtItemInput" id="itemCode" placeholder="I00-001" type="text" name="itemCode">
                         <p><small id="errItemCode" class="text-danger"></small></p>
                     </div>
                     <div class="mb-3">
                         <label class="form-label" for="newItemName">Description</label>
-                        <input class="form-control txtItemInput" id="newItemName" placeholder="Item1" type="text">
+                        <input class="form-control txtItemInput" id="newItemName" placeholder="Item1" type="text" name="description">
                         <p><small id="errItemName" class="text-danger"></small></p>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label" for="price">Price</label>
-                        <input class="form-control txtItemInput" id="price" placeholder="100.00" type="text">
-                        <p><small id="errPrice" class="text-danger"></small></p>
+                        <label class="form-label" for="quantity">Quantity</label>
+                        <input class="form-control txtItemInput" id="quantity" placeholder="100" type="text" name="unitPrice">
+                        <p><small id="errQty" class="text-danger"></small></p>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label" for="quantity">Quantity</label>
-                        <input class="form-control txtItemInput" id="quantity" placeholder="100" type="text">
-                        <p><small id="errQty" class="text-danger"></small></p>
+                        <label class="form-label" for="price">Price</label>
+                        <input class="form-control txtItemInput" id="price" placeholder="100.00" type="text" name="qtyOnHand">
+                        <p><small id="errPrice" class="text-danger"></small></p>
                     </div>
                     <div class="d-flex justify-content-center p-3">
                         <button class="btn btn-success me-3 ps-4 pe-4" id="btnSaveItem" type="button">Save</button>
@@ -422,8 +422,8 @@
                     <tr>
                         <th scope="col">Item Code</th>
                         <th scope="col">Name</th>
-                        <th scope="col">Price(LKR.)</th>
                         <th scope="col">Qty</th>
+                        <th scope="col">Price(LKR.)</th>
                     </tr>
                     </thead>
                     <tbody></tbody>
@@ -435,6 +435,7 @@
 <script src="assets/JQuery/jquery-3.6.0.min.js"></script>
 <script src="assets/bootstrap/js/bootstrap.min.js"></script>
 <script src="controller/CustomerController.js"></script>
+<script src="controller/ItemController.js"></script>
 <script>
     /*Initial state*/
     $(".orders").css('display', 'none');
@@ -472,6 +473,7 @@
     });
 
     loadAllCustomers();
+    loadAllItems();
 
     /*Customer starts*/
     /*Save Customer*/
@@ -616,63 +618,26 @@
     /*Item starts*/
     /*Save Item*/
     $("#btnSaveItem").click(function () {
-        let itemCode = $("#itemCode").val();
-        let description = $("#newItemName").val();
-        let itemPrice = $("#price").val();
-        let quantity = $("#quantity").val();
-
-        var itemDTO = new ItemDTO(itemCode,description,itemPrice,quantity);
-        let response = confirm("Are you sure you want to Add this Item?");
-
-        if (response){
-            saveItem(itemDTO);
-            clearItemForm();
-            clearItemTable();
-            loadAllItems();
-            bindItemTableEvents();
-            loadItemIds();
-        }else {
-
-        }
+        saveItem();
     });
 
     /*Item Update Starts*/
     $("#btnUpdateItem").click(function () {
-        //alert("update item");
-        let itemCode = $("#itemCode").val();
-        let description = $("#newItemName").val();
-        let itemPrice = $("#price").val();
-        let quantity = $("#quantity").val();
-
-        var updatedItem = new ItemDTO(itemCode,description,itemPrice,quantity);
-        let response = confirm("Are you sure you want to update this Item?");
-
-        if (response){
-           updateItem(updatedItem);
-           clearItemForm();
-           clearItemTable();
-           loadAllItems();
-           bindItemTableEvents();
-           loadItemIds();
-        }else {
-
-        }
+        updateItem();
     });
     /*Item Update Ends*/
+
+    /*Item Delete Starts*/
+    $("#btnDeleteItem").click(function () {
+        let code = $("#itemCode").val();
+        deleteItem(code);
+    });
+    /*Item Delete Ends*/
 
     /*Item Search Starts*/
     $("#btnSearchItem").click(function () {
         let searchCode = $("#txtSearchItem").val();
-        let searchResponse = searchItem(searchCode);
-
-        if (searchResponse){
-            $("#itemCode").val(searchResponse.getItemCode());
-            $("#newItemName").val(searchResponse.getDescription());
-            $("#price").val(searchResponse.getPrice());
-            $("#quantity").val(searchResponse.getQty());
-        }else{
-            alert("No Items match your search");
-        }
+        searchItem(searchCode);
     });
     /*Item Search Ends*/
 
@@ -1009,7 +974,6 @@
 </script>
 <script src="db/DB.js"></script>
 
-<script src="controller/ItemController.js"></script>
 <script src="controller/OrderController.js"></script>
 <script src="controller/OrderDetailController.js"></script>
 <script src="model/Item.js"></script>

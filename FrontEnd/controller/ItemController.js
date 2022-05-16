@@ -1,33 +1,107 @@
-function saveItem(dto) {
-    itemDB.push(dto);
+function saveItem() {
+    var data= $("#itemForm").serialize();
+    console.log(data);
+
+    $.ajax({
+        url:"http://localhost:8080/pos/item",
+        method:"POST",
+        data:data,// if we send data with the request
+        beforeSend:function(){
+            return confirm("Are you sure you want to add this item?");
+        },
+        success: function (res) {
+            if (res.status == 200) {
+                alert(res.message);
+                loadAllItems();
+            } else {
+                alert(res.data);
+            }
+        },
+        error: function (ob, textStatus, error) {
+            alert(textStatus);
+            console.log(ob.responseText);
+        }
+    });
 }
 
-function updateItem(dto) {
-    for (var item of itemDB) {
-        if (dto.getItemCode() == item.getItemCode()) {
-            item.setItemCode(dto.getItemCode());
-            item.setDescription(dto.getDescription());
-            item.setPrice(dto.getPrice());
-            item.setQty(dto.getQty());
-        }
+function updateItem() {
+    var itemDTO = {
+        code:$("#itemCode").val(),
+        description:$("#newItemName").val(),
+        qtyOnHand:$("#price").val(),
+        unitPrice:$("#quantity").val()
     }
+    $.ajax({
+        url: "http://localhost:8080/pos/item",
+        method: "PUT",
+        contentType:"application/json",
+        data:JSON.stringify(itemDTO),
+        beforeSend: function(){
+            return confirm("Are you sure you want to Update this Item?");
+        },
+        success: function (res) {
+            if (res.status==200) {
+                alert(res.message);
+                loadAllItems();
+            }else if(res.salary==400){
+                alert(res.data)
+            }else {
+                alert(res.data);
+            }
+
+        },
+        error: function (ob, textStatus, error) {
+            alert(textStatus);
+            console.log(ob.responseText);
+        }
+    });
 }
 
 function deleteItem(itemCode) {
-    for (var item of itemDB) {
-        if (item.getItemCode() == itemCode) {
-            var index = itemDB.indexOf(item);
-            itemDB.splice(index,1);
+    $.ajax({
+        url: "http://localhost:8080/pos/item?itemCode=" + itemCode,
+        method: "DELETE",
+        //data:data,// application/x-www-form-urlencoded
+        beforeSend:function(){
+            return confirm("Are you sure you want to DELETE this item?");
+        },
+        success: function (res) {
+            if (res.status==200) {
+                console.log(typeof res)
+                alert(res.message);
+                loadAllItems();
+            }else if (res.status==400){
+                alert(res.data);
+            }else {
+                alert(res.data);
+            }
+
+        },
+        error: function (ob, textStatus, error) {
+            alert(textStatus);
+            console.log(ob.responseText);
         }
-    }
+    });
 }
 
 function searchItem(itemCode) {
-    for (var item of itemDB) {
-        if (item.getItemCode() == itemCode) {
-            return item;
+    $.ajax({
+        url: "http://localhost:8080/pos/item?option=SEARCH&itemCode="+itemCode,
+        method:"GET",
+        success: function (resp) {
+            if (resp.status==200){
+                for (const item of resp.data) {
+                    console.log(item.id ,item.name)
+                    $("#itemCode").val(item.code);
+                    $("#newItemName").val(item.description);
+                    $("#price").val(item.qtyOnHand);
+                    $("#quantity").val(item.unitPrice);
+                }
+            }else {
+                alert(resp.message);
+            }
         }
-    }
+    });
 }
 
 function bindItemTableEvents() {
@@ -36,8 +110,8 @@ function bindItemTableEvents() {
         let selectedRow = $(this);
         let itemCode = $(this).children(":nth-child(1)").text();
         let itemName = $(this).children(":nth-child(2)").text();
-        let itemPrice = $(this).children(":nth-child(3)").text();
-        let itemQty = $(this).children(":nth-child(4)").text();
+        let itemQty = $(this).children(":nth-child(3)").text();
+        let itemPrice = $(this).children(":nth-child(4)").text();
 
         $("#itemCode").val(itemCode);
         $("#newItemName").val(itemName);
@@ -46,7 +120,7 @@ function bindItemTableEvents() {
     });
 
     /*Item Delete starts*/
-    $("#tblItem>tbody>tr").dblclick(function () {
+    /*$("#tblItem>tbody>tr").dblclick(function () {
         let itemCode = $(this).children(":nth-child(1)").text();
         let itemName = $(this).children(":nth-child(2)").text();
         let itemPrice = $(this).children(":nth-child(3)").text();
@@ -66,15 +140,26 @@ function bindItemTableEvents() {
         } else {
 
         }
-    });
+    });*/
     /*Item Delete ends*/
 }
 
 function loadAllItems() {
-    for (var item of itemDB) {
-        let row = `<tr><td>${item.getItemCode()}</td><td>${item.getDescription()}</td><td>${item.getPrice()}</td><td>${item.getQty()}</td></tr>`;
-        $("#tblItem").append(row);
-    }
+    $("#tblItem>tbody").empty();
+    $.ajax({
+        url: "http://localhost:8080/pos/item?option=GETALL",
+        method:"GET",
+        // dataType:"json", // please convert the response into JSON
+        success: function (resp) {
+            console.log(typeof resp);
+            for (const item of resp.data) {
+                console.log(item.code ,item.description)
+                let row=`<tr><td>${item.code}</td><td>${item.description}</td><td>${item.unitPrice}</td><td>${item.qtyOnHand}</td></tr>`;
+                $("#tblItem").append(row);
+            }
+            bindItemTableEvents();
+        }
+    });
 }
 
 function getItemIds() {
