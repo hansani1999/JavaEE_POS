@@ -2,6 +2,7 @@ package servlet;
 
 import dao.CrudUtil;
 import dao.custom.impl.CustomerDAOImpl;
+import entity.Customer;
 
 import javax.annotation.Resource;
 import javax.json.*;
@@ -17,6 +18,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 @WebServlet(urlPatterns = "/customer")
 public class CustomerServlet extends HttpServlet {
@@ -38,9 +40,19 @@ public class CustomerServlet extends HttpServlet {
             switch (option) {
                 case "GETALL":
                     /*PreparedStatement pstm = connection.prepareStatement("SELECT * FROM Customer");*/
-                    ResultSet rst = CrudUtil.executeQuery(connection,"SELECT * FROM Customer");
-                    System.out.println("ResultSet "+rst);
                     JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
+                    ArrayList<Customer> allCustomers = customerDAO.getAll(connection);
+
+                    for (Customer customer : allCustomers) {
+                        JsonObjectBuilder obj = Json.createObjectBuilder();
+                        obj.add("id",customer.getId());
+                        obj.add("name",customer.getName());
+                        obj.add("address",customer.getAddress());
+                        obj.add("salary",customer.getSalary());
+                        arrayBuilder.add(obj.build());
+                    }
+                    /*ResultSet rst = CrudUtil.executeQuery(connection,"SELECT * FROM Customer");
+                    System.out.println("ResultSet "+rst);
                     resp.setContentType("application/json");
 
                     while (rst.next()) {
@@ -55,7 +67,7 @@ public class CustomerServlet extends HttpServlet {
                         obj.add("address", address);
                         obj.add("salary", salary);
                         arrayBuilder.add(obj.build());
-                    }
+                    }*/
                     //Generate a custom response
                     JsonObjectBuilder response = Json.createObjectBuilder();
                     response.add("status", 200);

@@ -1,5 +1,10 @@
 package dao.custom;
 
-public interface CustomerDAO {
+import dao.CrudDAO;
+import entity.Customer;
+
+import java.sql.Connection;
+
+public interface CustomerDAO extends CrudDAO<Connection,Customer,String> {
 
 }
