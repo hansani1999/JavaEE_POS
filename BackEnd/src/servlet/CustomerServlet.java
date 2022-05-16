@@ -1,5 +1,8 @@
 package servlet;
 
+import dao.CrudUtil;
+import dao.custom.impl.CustomerDAOImpl;
+
 import javax.annotation.Resource;
 import javax.json.*;
 import javax.servlet.ServletException;
@@ -20,6 +23,8 @@ public class CustomerServlet extends HttpServlet {
     @Resource(name = "java:comp/env/jdbc/pool")
     DataSource dataSource;
 
+    CustomerDAOImpl customerDAO = new CustomerDAOImpl();
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
@@ -28,12 +33,13 @@ public class CustomerServlet extends HttpServlet {
             Connection connection = dataSource.getConnection();
             String option = req.getParameter("option");
             String searchId = req.getParameter("cusID");
-            System.out.println(searchId);
+            //System.out.println(searchId);
 
             switch (option) {
                 case "GETALL":
-                    PreparedStatement pstm = connection.prepareStatement("SELECT * FROM Customer");
-                    ResultSet rst = pstm.executeQuery();
+                    /*PreparedStatement pstm = connection.prepareStatement("SELECT * FROM Customer");*/
+                    ResultSet rst = CrudUtil.executeQuery(connection,"SELECT * FROM Customer");
+                    System.out.println("ResultSet "+rst);
                     JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
                     resp.setContentType("application/json");
 
@@ -96,7 +102,6 @@ public class CustomerServlet extends HttpServlet {
                     break;
             }
             connection.close();
-
 
         } catch (SQLException throwables) {
             throwables.printStackTrace();

@@ -5,7 +5,8 @@
     <meta content="width=device-width, initial-scale=1" name="viewport">
     <link href="assets/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link href="assets/css/fonts/css/all.css" rel="stylesheet">
-    <title>Home</title>
+    <link href="assets/icons/cart.png" rel="icon">
+    <title>Samanthas</title>
 </head>
 <body class="bg-light">
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary container-fluid me-0">
@@ -475,7 +476,6 @@
     /*Customer starts*/
     /*Save Customer*/
     $("#btnSaveCustomer").prop('disabled',true);
-
     $("#btnSaveCustomer").click(function () {
         $("#tblCust>tbody>tr").off("click");
 
@@ -486,8 +486,7 @@
 
         saveCustomer();
     });
-
-
+    /*Save Customer*/
 
     /*Customer Update Starts*/
     $("#btnUpdate").on('click',function () {
@@ -516,18 +515,6 @@
         var searchId = $("#cid").val();
 
         searchCustomer(searchId);
-        /*var searchId = $("#txtSearchCust").val();
-
-        var response = searchCustomer(searchId);
-
-        if (response){
-            $("#cid").val(response.getCustomerId());
-            $("#newCustName").val(response.getCustomerName());
-            $("#newCustAddress").val(response.getAddress());
-            $("#newCustSalary").val(response.getSalary());
-        }else {
-            alert("Customer Not Found");
-        }*/
     });
     /*Customer Search Ends*/
 
