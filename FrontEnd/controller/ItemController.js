@@ -13,6 +13,7 @@ function saveItem() {
             if (res.status == 200) {
                 alert(res.message);
                 loadAllItems();
+                clearItemForm();
             } else {
                 alert(res.data);
             }
@@ -43,6 +44,7 @@ function updateItem() {
             if (res.status==200) {
                 alert(res.message);
                 loadAllItems();
+                clearItemForm();
             }else if(res.salary==400){
                 alert(res.data)
             }else {
@@ -70,6 +72,7 @@ function deleteItem(itemCode) {
                 console.log(typeof res)
                 alert(res.message);
                 loadAllItems();
+                clearItemForm();
             }else if (res.status==400){
                 alert(res.data);
             }else {

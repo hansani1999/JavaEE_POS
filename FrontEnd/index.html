@@ -402,12 +402,12 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label" for="quantity">Quantity</label>
-                        <input class="form-control txtItemInput" id="quantity" placeholder="100" type="text" name="unitPrice">
+                        <input class="form-control txtItemInput" id="quantity" placeholder="100" type="text" name="qtyOnHand">
                         <p><small id="errQty" class="text-danger"></small></p>
                     </div>
                     <div class="mb-3">
                         <label class="form-label" for="price">Price</label>
-                        <input class="form-control txtItemInput" id="price" placeholder="100.00" type="text" name="qtyOnHand">
+                        <input class="form-control txtItemInput" id="price" placeholder="100.00" type="text" name="unitPrice">
                         <p><small id="errPrice" class="text-danger"></small></p>
                     </div>
                     <div class="d-flex justify-content-center p-3">
@@ -640,16 +640,16 @@
             if(regItemCode.test($("#itemCode").val())){
                 $("#newItemName").focus();
                 if(regItemName.test($("#newItemName").val())){
-                    $("#price").focus();
-                    if(regPrice.test($("#price").val())){
-                        $("#quantity").focus();
-                        if(regQty.test($("#quantity").val())){
+                    $("#quantity").focus()
+                    if(regPrice.test($("#quantity").val())){
+                        $("#price").focus();
+                        if(regQty.test($("#price").val())){
                             $("#btnSaveItem").focus();
                         }else {
-                            $("#quantity").focus();
+                            $("#price").focus();
                         }
                     }else{
-                        $("#price").focus();
+                        $("#quantity").focus();
                     }
                 }else{
                     $("#newItemName").focus();
@@ -665,22 +665,23 @@
             if(regItemName.test($("#newItemName").val())){
                 $("#newItemName").css('border','2px solid green');
                 $("#errItemName").text("");
-                if(regPrice.test($("#price").val())){
-                    $("#price").css('border','2px solid green');
-                    $("#errPrice").text("");
-                    if(regQty.test($("#quantity").val())){
-                        $("#quantity").css('border','2px solid green');
-                        $("#errQty").text("");
+                if(regPrice.test($("#quantity").val())){
+                    $("#quantity").css('border','2px solid green');
+                    $("#errQty").text("");
+                    if(regQty.test($("#price").val())){
+                        $("#price").css('border','2px solid green');
+                        $("#errPrice").text("");
                         $("#btnSaveItem").prop('disabled',false);
                     }else {
-                        $("#quantity").css('border','2px solid red');
-                        $("#errQty").text("Incorrect Format! : 100");
+                        $("#price").css('border','2px solid red');
+                        $("#errPrice").text("Incorrect Format! : 100.00");
                         $("#btnSaveItem").prop('disabled',true);
                     }
                 }else{
-                    $("#price").css('border','2px solid red');
-                    $("#errPrice").text("Incorrect Format! : 100.00");
+                    $("#quantity").css('border','2px solid red');
+                    $("#errQty").text("Incorrect Format! : 100");
                     $("#btnSaveItem").prop('disabled',true);
+
                 }
             }else{
                 $("#newItemName").css('border','2px solid red');
