@@ -220,6 +220,7 @@ public class ItemServlet extends HttpServlet {
                 response.add("data", "Wrong ID");
                 writer.print(response.build());
             }
+            connection.close();
         } catch (SQLException throwables) {
             JsonObjectBuilder response = Json.createObjectBuilder();
             response.add("status", 500);
@@ -259,7 +260,6 @@ public class ItemServlet extends HttpServlet {
                 objectBuilder.add("message", "");
                 writer.print(objectBuilder.build());
             }
-
             connection.close();
         } catch (SQLException throwables) {
             JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
