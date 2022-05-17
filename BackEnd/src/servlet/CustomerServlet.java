@@ -1,7 +1,10 @@
 package servlet;
 
+import bo.custom.CustomerBO;
+import bo.custom.impl.CustomerBOImpl;
 import dao.CrudUtil;
 import dao.custom.impl.CustomerDAOImpl;
+import dto.CustomerDTO;
 import entity.Customer;
 
 import javax.annotation.Resource;
@@ -25,7 +28,7 @@ public class CustomerServlet extends HttpServlet {
     @Resource(name = "java:comp/env/jdbc/pool")
     DataSource dataSource;
 
-    CustomerDAOImpl customerDAO = new CustomerDAOImpl();
+    CustomerBO customerBO = new CustomerBOImpl();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -35,20 +38,17 @@ public class CustomerServlet extends HttpServlet {
             Connection connection = dataSource.getConnection();
             String option = req.getParameter("option");
             String searchId = req.getParameter("cusID");
-            //System.out.println(searchId);
 
             switch (option) {
                 case "GETALL":
-                    /*PreparedStatement pstm = connection.prepareStatement("SELECT * FROM Customer");*/
                     JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
-                    ArrayList<Customer> allCustomers = customerDAO.getAll(connection);
 
-                    for (Customer customer : allCustomers) {
+                    for (CustomerDTO dto : customerBO.getAllCustomers(connection)) {
                         JsonObjectBuilder obj = Json.createObjectBuilder();
-                        obj.add("id",customer.getId());
-                        obj.add("name",customer.getName());
-                        obj.add("address",customer.getAddress());
-                        obj.add("salary",customer.getSalary());
+                        obj.add("id",dto.getCusId());
+                        obj.add("name",dto.getCusName());
+                        obj.add("address",dto.getCusAddress());
+                        obj.add("salary",dto.getSalary());
                         arrayBuilder.add(obj.build());
                     }
                     /*ResultSet rst = CrudUtil.executeQuery(connection,"SELECT * FROM Customer");
@@ -77,7 +77,32 @@ public class CustomerServlet extends HttpServlet {
                     break;
 
                 case "SEARCH":
-                    PreparedStatement pstm2 = connection.prepareStatement("SELECT * FROM Customer WHERE id=?");
+                    CustomerDTO dto = customerBO.searchCustomer(connection, searchId);
+                    JsonArrayBuilder arrayBuilder2 = Json.createArrayBuilder();
+                    if (dto!=null){
+                        JsonObjectBuilder obj = Json.createObjectBuilder();
+                        obj.add("id", dto.getCusId());
+                        obj.add("name", dto.getCusName());
+                        obj.add("address", dto.getCusAddress());
+                        obj.add("salary", dto.getSalary());
+                        arrayBuilder2.add(obj.build());
+
+                        //Generate a custom response
+                        JsonObjectBuilder response2 = Json.createObjectBuilder();
+                        response2.add("status", 200);
+                        response2.add("message", "Done");
+                        response2.add("data", arrayBuilder2.build());
+                        writer.print(response2.build());
+                    }else {
+                        //Generate a custom response
+                        JsonObjectBuilder response2 = Json.createObjectBuilder();
+                        response2.add("status", 400);
+                        response2.add("message", "No results match your search");
+                        response2.add("data", arrayBuilder2.build());
+                        writer.print(response2.build());
+                        resp.setStatus(HttpServletResponse.SC_OK);
+                    }
+                    /*PreparedStatement pstm2 = connection.prepareStatement("SELECT * FROM Customer WHERE id=?");
                     pstm2.setString(1, searchId);
                     ResultSet rst2 = pstm2.executeQuery();
                     JsonArrayBuilder arrayBuilder2 = Json.createArrayBuilder();
@@ -110,7 +135,7 @@ public class CustomerServlet extends HttpServlet {
                        response2.add("data", arrayBuilder2.build());
                        writer.print(response2.build());
                        resp.setStatus(HttpServletResponse.SC_OK);
-                   }
+                   }*/
                     break;
             }
             connection.close();
@@ -131,12 +156,13 @@ public class CustomerServlet extends HttpServlet {
 
         try {
             Connection connection = dataSource.getConnection();
-            PreparedStatement pstm = connection.prepareStatement("INSERT INTO Customer VALUES (?,?,?,?)");
+            /*PreparedStatement pstm = connection.prepareStatement("INSERT INTO Customer VALUES (?,?,?,?)");
             pstm.setObject(1, customerID);
             pstm.setObject(2, customerName);
             pstm.setObject(3, customerAddress);
             pstm.setObject(4, salary);
-            boolean b = pstm.executeUpdate() > 0;
+            boolean b = pstm.executeUpdate() > 0;*/
+            boolean b = customerBO.saveCustomer(connection, new CustomerDTO(customerID, customerName, customerAddress, Double.parseDouble(salary)));
 
             if (b) {
                 JsonObjectBuilder response = Json.createObjectBuilder();
@@ -169,17 +195,17 @@ public class CustomerServlet extends HttpServlet {
         String address = jsonObject.getString("address");
         String salary = jsonObject.getString("salary");
 
-        System.out.println(id + " " + name + " " + address + " " + salary);
-
         resp.setContentType("application/json");
         try {
             Connection connection = dataSource.getConnection();
-            PreparedStatement pstm = connection.prepareStatement("UPDATE Customer SET name=?,address=?,salary=? WHERE id=?");
+            /*PreparedStatement pstm = connection.prepareStatement("UPDATE Customer SET name=?,address=?,salary=? WHERE id=?");
             pstm.setObject(1, name);
             pstm.setObject(2, address);
             pstm.setObject(3, salary);
             pstm.setObject(4, id);
-            boolean b = pstm.executeUpdate() > 0;
+            boolean b = pstm.executeUpdate() > 0;*/
+
+            boolean b = customerBO.updateCustomer(connection, new CustomerDTO(id, name, address, Double.parseDouble(salary)));
 
 
             if (b) {
@@ -214,14 +240,15 @@ public class CustomerServlet extends HttpServlet {
 
         try {
             Connection connection = dataSource.getConnection();
-            PreparedStatement pstm = connection.prepareStatement("DELETE FROM Customer WHERE id=?");
+            /*PreparedStatement pstm = connection.prepareStatement("DELETE FROM Customer WHERE id=?");
             pstm.setObject(1, customerID);
 
-            boolean b = pstm.executeUpdate() > 0;
+            boolean b = pstm.executeUpdate() > 0;*/
+
+            boolean b = customerBO.deleteCustomer(connection, customerID);
 
 
             if (b) {
-                //writer.write("Customer Deleted");
                 JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
                 objectBuilder.add("status", 200);
                 objectBuilder.add("message", "Deleted Successfully");

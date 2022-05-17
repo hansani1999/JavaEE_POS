@@ -493,28 +493,12 @@
     /*Customer Update Starts*/
     $("#btnUpdate").on('click',function () {
         updateCustomer();
-        /*let cusId= $("#cid").val();
-        let cusName = $("#newCustName").val();
-        let cusAddress = $("#newCustAddress").val();
-        let cusSalary = $("#newCustSalary").val();
-
-        var updatedCustomerDTO = new CustomerDTO(cusId,cusName,cusAddress,cusSalary);
-        var response = confirm("Are you sure you want to Update this Customer?");
-
-        if (response){
-            updateCustomer(updatedCustomerDTO);
-            clearCusForm();
-            clearTable();
-            loadAllCustomers();
-            bindTableEvents();
-            loadCustIds();
-        }*/
     });
     /*Customer Update Ends*/
 
     /*Customer Search Starts*/
     $("#btnSearchCust").click(function () {
-        var searchId = $("#cid").val();
+        var searchId = $("#txtSearchCust").val();
 
         searchCustomer(searchId);
     });

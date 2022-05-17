@@ -13,6 +13,7 @@ function saveCustomer() {
             if (res.status == 200) {
                 alert(res.message);
                 loadAllCustomers();
+                clearCusForm();
             } else {
                 alert(res.data);
             }
@@ -43,6 +44,7 @@ function updateCustomer(){
             if (res.status==200) {
                 alert(res.message);
                 loadAllCustomers();
+                clearCusForm();
             }else if(res.salary==400){
                 alert(res.data)
             }else {
@@ -148,6 +150,7 @@ function deleteCustomer(cusId) {
                 console.log(typeof res)
                 alert(res.message);
                 loadAllCustomers();
+                clearCusForm();
             }else if (res.status==400){
                 alert(res.data);
             }else {
