@@ -1,34 +1,74 @@
+function loadAllOrders() {
+    $("#tblOrder>tbody").empty();
+    $.ajax({
+        url: "http://localhost:8080/pos/orders?option=GET_ALL_ORDERS",
+        method:"GET",
+        // dataType:"json", // please convert the response into JSON
+        success: function (resp) {
+            console.log(typeof resp);
+            for (const order of resp.data) {
+                let row=`<tr><td>${order.orderId}</td><td>${order.cusId}</td><td>${order.orderDate}</td><td>${order.cost}</td></tr>`;
+                $("#tblOrder").append(row);
+            }
+            //getCustomerToForm();
+        }
+    });
+}
+
 function loadCustIds(){
-    let custIds = getAllCustomers();
     $("#txtCid").empty();
-    for (var id of custIds){
-        var option = `<option>${id}</option>`;
-        $("#txtCid").append(option);
-    }
-    $("#txtCid").off();
-    $("#txtCid").bind('change',function () {
-        var cusId= $("#txtCid").val();
-        var customer = searchCustomer(cusId);
-        $("#name").val(customer.getCustomerName());
-        $("#address").val(customer.getAddress());
-        $("#salary").val(customer.getSalary());
+    $.ajax({
+        url: "http://localhost:8080/pos/orders?option=GET_CUS_IDS",
+        method:"GET",
+        success: function (resp) {
+            console.log(typeof resp);
+            for (const customer of resp.data) {
+                var option1 = `<option>${customer.id}</option>`;
+                $("#txtCid").append(option1);
+            }
+            $("#txtCid").off();
+            $("#txtCid").bind('change',function () {
+                var cusId= $("#txtCid").val();
+                getCustomer(cusId);
+            });
+        }
     });
 }
 
 function loadItemIds() {
-    let itemIds = getItemIds();
     $("#code").empty();
-    for (var id of itemIds){
-        var option = `<option>${id}</option>`;
-        $("#code").append(option);
-    }
+    $.ajax({
+        url: "http://localhost:8080/pos/orders?option=GET_ITEM_IDS",
+        method:"GET",
+        success: function (resp) {
+            for (var item of resp.data){
+                var option = `<option>${item.code}</option>`;
+                $("#code").append(option);
+            }
+            $("#code").bind('change',function () {
+                var itemCode = $("#code").val();
+                getItem(itemCode);
+            });
+        }
+    });
 
-    $("#code").bind('change',function () {
-        var itemCode = $("#code").val();
-        var item = searchItem(itemCode);
-        $("#itemName").val(item.getDescription());
-        $("#txtPrice").val(item.getPrice());
-        $("#qty").val(item.getQty());
+}
+
+function getItem(itemCode) {
+    $.ajax({
+        url: "http://localhost:8080/pos/item?option=SEARCH&itemCode="+itemCode,
+        method:"GET",
+        success: function (resp) {
+            if (resp.status==200){
+                for (const item of resp.data) {
+                    $("#itemName").val(item.description);
+                    $("#txtPrice").val(item.qtyOnHand);
+                    $("#qty").val(item.unitPrice);
+                }
+            }else {
+                alert(resp.message);
+            }
+        }
     });
 }
 
@@ -94,3 +134,23 @@ function searchOrder(orderId) {
         }
     }
 }
+
+function getCustomer(cusId){
+    $.ajax({
+        url: "http://localhost:8080/pos/customer?option=SEARCH&cusID="+cusId,
+        method:"GET",
+        // dataType:"json", // please convert the response into JSON
+        success: function (resp) {
+            if (resp.status==200){
+                for (const customer of resp.data) {
+                    $("#name").val(customer.name);
+                    $("#address").val(customer.address);
+                    $("#salary").val(customer.salary);
+                }
+            }else {
+                alert(resp.message);
+            }
+        }
+    });
+}
+

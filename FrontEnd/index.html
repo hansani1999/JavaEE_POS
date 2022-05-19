@@ -233,7 +233,7 @@
                     <thead class="bg-danger bg-opacity-50">
                     <tr>
                         <th scope="col">Code</th>
-                        <th scope="col">Name</th>
+                        <th scope="col">DESC</th>
                         <th scope="col">Price</th>
                         <th scope="col">Qty</th>
                         <th scope="col">Total(LKR)</th>
@@ -265,7 +265,7 @@
                             <th scope="col">Cust.Id</th>
                             <th scope="col">cost</th>
                             <th scope="col">Date</th>
-                            <th scope="col">Edit</th>
+                            <!--<th scope="col">Edit</th>-->
                         </tr>
                         </thead>
                         <tbody>
@@ -436,6 +436,8 @@
 <script src="assets/bootstrap/js/bootstrap.min.js"></script>
 <script src="controller/CustomerController.js"></script>
 <script src="controller/ItemController.js"></script>
+<script src="controller/OrderController.js"></script>
+<script src="controller/OrderDetailController.js"></script>
 <script>
     /*Initial state*/
     $(".orders").css('display', 'none');
@@ -474,6 +476,9 @@
 
     loadAllCustomers();
     loadAllItems();
+    loadAllOrders();
+    loadCustIds();
+    loadItemIds();
 
     /*Customer starts*/
     /*Save Customer*/
@@ -959,8 +964,7 @@
 </script>
 <script src="db/DB.js"></script>
 
-<script src="controller/OrderController.js"></script>
-<script src="controller/OrderDetailController.js"></script>
+
 <script src="model/Item.js"></script>
 <script src="model/Customer.js"></script>
 <script src="model/CartItem.js"></script>

@@ -165,13 +165,13 @@ function loadAllItems() {
     });
 }
 
-function getItemIds() {
+/*function getItemIds() {
     var itemIds = new Array();
     for (var item of itemDB) {
         itemIds.push(item.getItemCode());
     }
     return itemIds;
-}
+}*/
 
 function updateQty(orderDetailList) {
 

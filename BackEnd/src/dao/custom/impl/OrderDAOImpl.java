@@ -21,7 +21,7 @@ public class OrderDAOImpl implements OrderDAO {
                     rst.getString(1),
                     rst.getString(2),
                     rst.getDate(3),
-                    rst.getDouble(6)
+                    rst.getDouble(4)
             ));
         }
         return orders;
@@ -55,5 +55,28 @@ public class OrderDAOImpl implements OrderDAO {
     @Override
     public boolean delete(Connection connection, String s) throws SQLException {
         throw new UnsupportedOperationException("Not Supported Yet");
+    }
+
+
+    @Override
+    public String generateOrderId(Connection connection) throws SQLException {
+        ResultSet rst = CrudUtil.executeQuery(connection,"SELECT orderId FROM `Order` ORDER BY orderId DESC LIMIT 1");
+
+        if (rst.next()){
+
+            int tempId = Integer.
+                    parseInt(rst.getString(1).split("-")[1]);
+            tempId=tempId+1;
+            if (tempId<=9){
+                return "OID-00"+tempId;
+            }else if(tempId<=99){
+                return "OID-0"+tempId;
+            }else{
+                return "OID-"+tempId;
+            }
+
+        }else{
+            return "OID-001";
+        }
     }
 }
