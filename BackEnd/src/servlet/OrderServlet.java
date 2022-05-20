@@ -12,9 +12,7 @@ import dao.custom.OrderDAO;
 import dao.custom.impl.CustomerDAOImpl;
 import dao.custom.impl.ItemDAOImpl;
 import dao.custom.impl.OrderDAOImpl;
-import dto.CustomerDTO;
-import dto.ItemDTO;
-import dto.OrderDTO;
+import dto.*;
 import entity.Customer;
 import entity.Item;
 import entity.Order;
@@ -31,9 +29,10 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.time.LocalDate;
+import java.text.ParseException;
+import java.sql.Date;
 import java.util.ArrayList;
-import java.util.Date;
+
 
 @WebServlet(urlPatterns = "/orders")
 public class OrderServlet extends HttpServlet {
@@ -110,28 +109,46 @@ public class OrderServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         PrintWriter writer = resp.getWriter();
+        resp.setContentType("application/json");
         JsonReader reader = Json.createReader(req.getReader());
         JsonObject jsonObject = reader.readObject();
-        System.out.println(jsonObject.getString("orderId"));
-        for (JsonValue item : jsonObject.getJsonArray("itemList")) {
-            System.out.println(item.asJsonObject().getString("itemCode"));
+        try {
+            Connection connection = dataSource.getConnection();
+            ArrayList<ItemDetail> details = new ArrayList<>();
+            String orderId = jsonObject.getString("orderId");
+            String cusId = jsonObject.getString("cusId");
+            String date = jsonObject.getString("orderDate");
+            double cost = Double.parseDouble(jsonObject.getString("cost"));
+            Date orderDate = Date.valueOf(date);
+
+            for (JsonValue item : jsonObject.getJsonArray("itemList")) {
+                String itemCode = item.asJsonObject().getString("itemCode");
+                int qty = Integer.parseInt(item.asJsonObject().getString("qty"));
+                Double uPrice = Double.parseDouble(item.asJsonObject().getString("uPrice"));
+                details.add(new ItemDetail(itemCode,qty,uPrice));
+            }
+
+            OrderDTO dto = new OrderDTO(
+                    orderId,
+                    cusId,
+                    orderDate,
+                    cost,
+                    details
+            );
+            boolean b = orderBO.placeOrder(connection,dto);
+            if (b){
+
+            }else {
+
+            }
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
         }
 
 
 
 
-        //String orderId = jsonObject.getString("orderId");
-        //System.out.println(orderId);
-        /*for (JsonValue value : array) {
-            System.out.println(value.asJsonObject().getString("orderId"));
-            System.out.println(value.asJsonObject().getString("cost"));
-            System.out.println(value.asJsonObject().getString("orderDate"));
-        }*/
-
-        /*String id = jsonObject.getString("id");
-        String name = jsonObject.getString("name");
-        String address = jsonObject.getString("address");
-        String salary = jsonObject.getString("salary");*/
     }
 
     @Override

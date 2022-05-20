@@ -171,7 +171,7 @@ function saveOrder() {
             detail.itemCode=cItem.getItemCode();
             detail.qty=cItem.getQty();
             detail.uPrice = cItem.getPrice();
-        orderDetailList.push(detail);
+            orderDetailList.push(detail);
         console.log("OrderQty : "+cItem.getQty());
     }
     for (var detail of orderDetailList){
@@ -195,7 +195,7 @@ function saveOrder() {
     $.ajax({
         url:"http://localhost:8080/pos/orders",
         method:"POST",
-        data:{order:orderDetailJson},
+        data:orderDetailJson,
         // if we send data with the request
         beforeSend:function(){
             return confirm("Are you sure you want to add this order?");
