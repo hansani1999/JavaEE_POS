@@ -58,6 +58,20 @@ public class OrderBOImpl implements OrderBO {
     }
 
     @Override
+    public ArrayList<OrderDTO> getAllOrders(Connection connection) throws SQLException {
+        ArrayList<OrderDTO> orders = new ArrayList<>();
+        for (Order order : orderDAO.getAll(connection)) {
+            orders.add(new OrderDTO(
+                    order.getOrderId(),
+                    order.getcId(),
+                    order.getOrderDate(),
+                    order.getCost()
+            ));
+        }
+        return orders;
+    }
+
+    @Override
     public ItemDTO searchItem(Connection connection, String itemCode) throws SQLException {
         Item item = itemDAO.search(connection, itemCode);
         if (item!=null){

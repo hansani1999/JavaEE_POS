@@ -1,8 +1,8 @@
-function addOrderDetail(orderDetailList) {
+/*function addOrderDetail(orderDetailList) {
     for (var orderDetail of orderDetailList){
         orderDetailDB.push(orderDetail);
     }
-}
+}*/
 
 function searchOrderDetail(orderId) {
     var orderItemList = new Array();

@@ -21,6 +21,12 @@ public class OrderDTO {
         this.setDetails(details);
     }
 
+    public OrderDTO(String orderId, String cId, Date orderDate, double cost) {
+        this.orderId = orderId;
+        this.cId = cId;
+        this.orderDate = orderDate;
+        this.cost = cost;
+    }
 
     public String getOrderId() {
         return orderId;

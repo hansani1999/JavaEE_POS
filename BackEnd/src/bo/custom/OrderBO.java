@@ -13,6 +13,8 @@ public interface OrderBO {
 
     ArrayList<ItemDTO> getAllItems(Connection connection) throws SQLException;
 
+    ArrayList<OrderDTO> getAllOrders(Connection connection) throws SQLException;
+
     ItemDTO searchItem(Connection connection,String itemCode) throws SQLException;
 
     CustomerDTO searchCustomer(Connection connection,String customerId) throws SQLException;

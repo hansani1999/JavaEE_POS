@@ -129,20 +129,21 @@
         <section class="row bg-white p-3 me-0 ms-0 mt-0">
             <section class="col-12 col-md col-l col-xl mb-2 bg-primary bg-opacity-10 rounded-2 p-0 me-2">
                 <div class="fs-6 text-center bg-primary bg-opacity-25 shadow p-2 ">Order Details</div>
+                <form action="orders" method="post" id="orderForm">
                 <div class="row p-4">
                     <div class="col mb-4">
                         <label class="form-label" for="oid">Order Id</label>
-                        <input aria-label="Order ID" class="form-control" id="oid" placeholder="OID-001" type="text">
+                        <input aria-label="Order ID" class="form-control" id="oid" placeholder="OID-001" type="text" name="OrderID">
                         <p><small class="text-danger" id="errTxtOid"></small></p>
                     </div>
                     <div class="col mb-3">
                         <label class="form-label" for="txtDate">Order Date</label>
-                        <input  aria-label="Last name" class="form-control" id="txtDate" type="date">
+                        <input  aria-label="Last name" class="form-control" id="txtDate" type="date" name="OrderDate">
                     </div>
                     <div class="mb-3">
                         <label class="form-label" for="txtCid">Customer Id</label>
                         <!--<input class="form-control" id="txtCid" placeholder="C001" type="text">-->
-                        <select class="form-select" id="txtCid">
+                        <select class="form-select" id="txtCid" name="CusID">
                             <!--<option selected></option>-->
                             <!--<option>Kamal</option>
                             <option>Nimal</option>
@@ -162,6 +163,7 @@
                         <input class="form-control txtODInput" id="salary" placeholder="50000.00" type="text">
                     </div>
                 </div>
+                </form>
             </section>
             <section class="col-12 col-md col-l col-xl mb-2 bg-primary bg-opacity-25 rounded-2 p-0 me-2">
                 <div class="fs-6 text-center bg-primary bg-opacity-50 shadow text-white p-2 ">Item Details</div>
@@ -169,8 +171,8 @@
                     <div class="col mb-3">
                         <label class="form-label" for="code">Item Code</label>
                         <!--<input aria-label="Order ID" class="form-control" id="code" placeholder="I-001" type="text">-->
-                        <select class="form-select" id="code">
-                            <option selected>--Select item--</option>
+                        <select class="form-select" id="code" name="ItemCode">
+                            <!--<option selected>&#45;&#45;Select item&#45;&#45;</option>-->
                             <!--<option>I1</option>
                             <option>I2</option>
                             <option>I3</option>-->
@@ -438,6 +440,12 @@
 <script src="controller/ItemController.js"></script>
 <script src="controller/OrderController.js"></script>
 <script src="controller/OrderDetailController.js"></script>
+<script src="db/DB.js"></script>
+<script src="model/Item.js"></script>
+<script src="model/Customer.js"></script>
+<script src="model/CartItem.js"></script>
+<script src="model/Order.js"></script>
+<script src="model/OrderDetail.js"></script>
 <script>
     /*Initial state*/
     $(".orders").css('display', 'none');
@@ -874,22 +882,29 @@
 
     /*Add Order*/
     $("#btnPurchase").click(function () {
-        let orderId = $("#oid").val();
-        let orderDate = $("#txtDate").val();
-        let cusId = $("#txtCid").val();
+        /*var data= $("#orderForm").serialize();*/
+        /*$.ajax({
+            url:"http://localhost:8080/pos/orders",
+            method:"POST",
+            data:JSON.stringify(dto),// if we send data with the request
+            beforeSend:function(){
+                return confirm("Are you sure you want to add this order?");
+            },
+            success: function (res) {
+                if (res.status == 200) {
+                    alert(res.message);
+                    loadAllOrders();
+                    clearForms();
+                } else {
+                    alert(res.data);
+                }
+            },
+            error: function (ob, textStatus, error) {
+                alert(textStatus);
+                console.log(ob.responseText);
+            }
+        });*/
         let cost = $("#lblSubTotal").text();
-        let discount = $("#txtDiscount").val();
-
-        var orderDTO = new OrderDTO(orderId,cusId,cost,orderDate,discount);
-        var orderDetailList = new Array();
-
-        for (var cItem of cart){
-            orderDetailList.push(
-                new OrderDetail(cItem.getOrderId(), cItem.getItemCode(), cItem.getDescription(), cItem.getPrice(), cItem.getQty())
-            );
-            console.log("OrderQty : "+cItem.getQty());
-        }
-
         let costValue = cost.split("/")[0];
 
         if (!$("#oid").val()){
@@ -901,20 +916,23 @@
         }else {
             $("#oid").css('border','2px solid green');
             $("#errTxtOid").text("");
-            addOrder(orderDTO);
-            addOrderDetail(orderDetailList);
+            saveOrder();
+            /* addOrder(orderDTO);
+            addOrderDetail(orderDetailList);*/
+            /*saveOrder();
             clearCart();
             clearForms();
-            clearCartTable();
+            clearCartTable();*/
             total=0;
             newQty=0;
-            let row = `<tr><td>${orderId}</td><td>${cusId}</td><td>${costValue}</td><td>${orderDate}</td><td><button class="btn p-1 btn-warning"><i class="fas fa-edit"></i></button><button class="btn p-1 ms-1 btn-danger"><i class="fas fa-trash-alt"></i></button></td></tr>`;
-            $("#tblOrder").append(row);
-            console.log(cart);
+            /*let row = `<tr><td>${orderId}</td><td>${cusId}</td><td>${costValue}</td><td>${orderDate}</td><td><button class="btn p-1 btn-warning"><i class="fas fa-edit"></i></button><button class="btn p-1 ms-1 btn-danger"><i class="fas fa-trash-alt"></i></button></td></tr>`;
+            $("#tblOrder").append(row);*/
+            /*console.log(cart);
             console.log(orderDB);
-            console.log(orderDetailDB);
-            alert("Order Placed Successfully!");
+            console.log(orderDetailDB);*/
+            /*alert("Order Placed Successfully!");*/
         }
+        /*var orderDTO = new OrderDTO(orderId,cusId,cost,orderDate,discount);*/
     });
 
 
@@ -948,7 +966,6 @@
             }else {
                 alert("Not found");
             }
-
         }
     });
     /*Search Order Ends*/
@@ -962,13 +979,6 @@
     }
 
 </script>
-<script src="db/DB.js"></script>
 
-
-<script src="model/Item.js"></script>
-<script src="model/Customer.js"></script>
-<script src="model/CartItem.js"></script>
-<script src="model/Order.js"></script>
-<script src="model/OrderDetail.js"></script>
 </body>
 </html>

@@ -154,3 +154,65 @@ function getCustomer(cusId){
     });
 }
 
+function saveOrder() {
+    let orderId = $("#oid").val();
+    let orderDate = $("#txtDate").val();
+    let cusId = $("#txtCid").val();
+    let cost = $("#lblSubTotal").text();
+    let discount = $("#txtDiscount").val();
+    var orderDetailList = [];
+
+    let costValue = cost.split("/")[0];
+
+    console.log(cart)
+
+    for (let cItem of cart){
+        let detail={};
+            detail.itemCode=cItem.getItemCode();
+            detail.qty=cItem.getQty();
+            detail.uPrice = cItem.getPrice();
+        orderDetailList.push(detail);
+        console.log("OrderQty : "+cItem.getQty());
+    }
+    for (var detail of orderDetailList){
+        console.log(detail.itemCode,detail.qty,detail.uPrice)
+    }
+    //var orderDetailList = new Array();
+
+    let dto = {
+        orderId:orderId,
+        cusId:cusId,
+        orderDate:orderDate,
+        cost:costValue,
+        itemList:orderDetailList
+    }
+    let orderDetailJson = JSON.stringify(dto);
+   /* for (var i of array){
+        console.log(i.item)
+    }*/
+    console.log(orderDetailJson);
+
+    $.ajax({
+        url:"http://localhost:8080/pos/orders",
+        method:"POST",
+        data:{order:orderDetailJson},
+        // if we send data with the request
+        beforeSend:function(){
+            return confirm("Are you sure you want to add this order?");
+        },
+        success: function (res) {
+            if (res.status == 200) {
+                alert(res.message);
+                loadAllOrders();
+                clearForms();
+                clearCartTable();
+            } else {
+                alert(res.data);
+            }
+        },
+        error: function (ob, textStatus, error) {
+            alert(textStatus);
+            console.log(ob.responseText);
+        }
+    });
+}
