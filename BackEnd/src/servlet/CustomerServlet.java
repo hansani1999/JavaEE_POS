@@ -93,7 +93,7 @@ public class CustomerServlet extends HttpServlet {
                         response2.add("message", "Done");
                         response2.add("data", arrayBuilder2.build());
                         writer.print(response2.build());
-                    }else {
+                    } else {
                         //Generate a custom response
                         JsonObjectBuilder response2 = Json.createObjectBuilder();
                         response2.add("status", 400);
@@ -102,40 +102,6 @@ public class CustomerServlet extends HttpServlet {
                         writer.print(response2.build());
                         resp.setStatus(HttpServletResponse.SC_OK);
                     }
-                    /*PreparedStatement pstm2 = connection.prepareStatement("SELECT * FROM Customer WHERE id=?");
-                    pstm2.setString(1, searchId);
-                    ResultSet rst2 = pstm2.executeQuery();
-                    JsonArrayBuilder arrayBuilder2 = Json.createArrayBuilder();
-                    resp.setContentType("application/json");
-
-                   if(rst2.next()) {
-                        String id = rst2.getString(1);
-                        String name = rst2.getString(2);
-                        String address = rst2.getString(3);
-                        double salary = rst2.getDouble(4);
-
-                        JsonObjectBuilder obj = Json.createObjectBuilder();
-                        obj.add("id", id);
-                        obj.add("name", name);
-                        obj.add("address", address);
-                        obj.add("salary", salary);
-                        arrayBuilder2.add(obj.build());
-
-                        //Generate a custom response
-                       JsonObjectBuilder response2 = Json.createObjectBuilder();
-                       response2.add("status", 200);
-                       response2.add("message", "Done");
-                       response2.add("data", arrayBuilder2.build());
-                       writer.print(response2.build());
-                    }else {
-                       //Generate a custom response
-                       JsonObjectBuilder response2 = Json.createObjectBuilder();
-                       response2.add("status", 400);
-                       response2.add("message", "No results match your search");
-                       response2.add("data", arrayBuilder2.build());
-                       writer.print(response2.build());
-                       resp.setStatus(HttpServletResponse.SC_OK);
-                   }*/
                     break;
             }
             connection.close();

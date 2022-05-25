@@ -122,14 +122,16 @@ public class OrderBOImpl implements OrderBO {
         for (ItemDetail itemDetail : itemDetails) {
             OrderDetail detail = new OrderDetail(dto.getOrderId(),itemDetail.getItemCode(),itemDetail.getOrderQty(),itemDetail.getUnitPrice());
             boolean isSavedDetail = orderDetailDAO.save(connection,detail);
-
+            System.out.println("is saved OrderDetail "+isSavedDetail);
             if (!isSavedDetail) {
                 connection.rollback();
                 connection.setAutoCommit(true);
                 return false;
             }
 
-            Item item = itemDAO.search(connection,detail.getItemCode());
+            System.out.println("itemCode - "+detail.getItemCode());
+            Item item = itemDAO.search(connection,itemDetail.getItemCode());
+            System.out.println("Item - "+item);
             item.setQtyOnHand(item.getQtyOnHand()-detail.getQty());
             boolean isUpdatedQty = itemDAO.update(connection,item);
             if (!isUpdatedQty) {
@@ -147,6 +149,6 @@ public class OrderBOImpl implements OrderBO {
 
     @Override
     public String generateOrderId(Connection connection) throws SQLException {
-        return null;
+        return orderDAO.generateOrderId(connection);
     }
 }

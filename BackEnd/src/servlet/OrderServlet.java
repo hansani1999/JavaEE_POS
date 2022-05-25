@@ -99,6 +99,14 @@ public class OrderServlet extends HttpServlet {
                     response.add("data", arrayBuilder.build());
                     writer.print(response.build());
                     break;
+                case "GEN_ORDER_ID":
+                    String orderId = orderBO.generateOrderId(connection);
+                    JsonObjectBuilder response3 = Json.createObjectBuilder();
+                    response3.add("status","200");
+                    response3.add("message","");
+                    response3.add("data",orderId);
+                    writer.print(response3.build());
+                    break;
             }
             connection.close();
         } catch (SQLException throwables) {
@@ -137,18 +145,29 @@ public class OrderServlet extends HttpServlet {
             );
             boolean b = orderBO.placeOrder(connection,dto);
             if (b){
-
+                JsonObjectBuilder response = Json.createObjectBuilder();
+                response.add("status",200);
+                response.add("message","Order Placed Successfully");
+                response.add("data","");
+                writer.print(response.build());
             }else {
-
+                JsonObjectBuilder response = Json.createObjectBuilder();
+                response.add("status",400);
+                response.add("message","Error");
+                response.add("data","");
+                writer.print(response.build());
             }
+            connection.close();
 
         } catch (SQLException throwables) {
+            JsonObjectBuilder response = Json.createObjectBuilder();
+            response.add("status",400);
+            response.add("message","Error");
+            response.add("data",throwables.getLocalizedMessage());
+            resp.setStatus(HttpServletResponse.SC_OK);
+            writer.print(response.build());
             throwables.printStackTrace();
         }
-
-
-
-
     }
 
     @Override

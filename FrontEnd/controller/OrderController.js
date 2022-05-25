@@ -26,6 +26,7 @@ function loadCustIds(){
                 var option1 = `<option>${customer.id}</option>`;
                 $("#txtCid").append(option1);
             }
+            $("#txtCid").val("");
             $("#txtCid").off();
             $("#txtCid").bind('change',function () {
                 var cusId= $("#txtCid").val();
@@ -45,6 +46,7 @@ function loadItemIds() {
                 var option = `<option>${item.code}</option>`;
                 $("#code").append(option);
             }
+            $("#code").val("");
             $("#code").bind('change',function () {
                 var itemCode = $("#code").val();
                 getItem(itemCode);
@@ -206,6 +208,8 @@ function saveOrder() {
                 loadAllOrders();
                 clearForms();
                 clearCartTable();
+                clearCart();
+                generateOrderId();
             } else {
                 alert(res.data);
             }
@@ -213,6 +217,21 @@ function saveOrder() {
         error: function (ob, textStatus, error) {
             alert(textStatus);
             console.log(ob.responseText);
+        }
+    });
+}
+
+function generateOrderId() {
+    $.ajax({
+        url: "http://localhost:8080/pos/orders?option=GEN_ORDER_ID",
+        method:"GET",
+        // dataType:"json", // please convert the response into JSON
+        success: function (resp) {
+            console.log(typeof resp);
+            let data = resp.data;
+            $("#oid").val(data);
+            $("#oid").attr('disabled','disabled');
+            //getCustomerToForm();
         }
     });
 }

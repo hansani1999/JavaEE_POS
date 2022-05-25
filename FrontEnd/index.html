@@ -172,7 +172,7 @@
                         <label class="form-label" for="code">Item Code</label>
                         <!--<input aria-label="Order ID" class="form-control" id="code" placeholder="I-001" type="text">-->
                         <select class="form-select" id="code" name="ItemCode">
-                            <!--<option selected>&#45;&#45;Select item&#45;&#45;</option>-->
+                            <!--<option selected></option>-->
                             <!--<option>I1</option>
                             <option>I2</option>
                             <option>I3</option>-->
@@ -487,6 +487,7 @@
     loadAllOrders();
     loadCustIds();
     loadItemIds();
+    generateOrderId();
 
     /*Customer starts*/
     /*Save Customer*/
