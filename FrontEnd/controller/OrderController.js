@@ -64,8 +64,8 @@ function getItem(itemCode) {
             if (resp.status==200){
                 for (const item of resp.data) {
                     $("#itemName").val(item.description);
-                    $("#txtPrice").val(item.qtyOnHand);
-                    $("#qty").val(item.unitPrice);
+                    $("#txtPrice").val(item.unitPrice);
+                    $("#qty").val(item.qtyOnHand);
                 }
             }else {
                 alert(resp.message);
@@ -179,7 +179,6 @@ function saveOrder() {
     for (var detail of orderDetailList){
         console.log(detail.itemCode,detail.qty,detail.uPrice)
     }
-    //var orderDetailList = new Array();
 
     let dto = {
         orderId:orderId,

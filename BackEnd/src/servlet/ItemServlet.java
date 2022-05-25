@@ -105,37 +105,6 @@ public class ItemServlet extends HttpServlet {
                         resp.setStatus(HttpServletResponse.SC_OK);
                     }
                     break;
-                    /*PreparedStatement pstm2 = connection.prepareStatement("SELECT * FROM Item WHERE code=?");
-                    pstm2.setString(1, searchId);
-                    ResultSet rst2 = pstm2.executeQuery();*/
-                    /*if(rst2.next()) {
-                        String code = rst2.getString(1);
-                        String description = rst2.getString(2);
-                        String qtyOnHand = rst2.getString(3);
-                        double unitPrice = rst2.getDouble(4);
-
-                        JsonObjectBuilder obj = Json.createObjectBuilder();
-                        obj.add("code", code);
-                        obj.add("description", description);
-                        obj.add("qtyOnHand", qtyOnHand);
-                        obj.add("unitPrice", unitPrice);
-                        arrayBuilder2.add(obj.build());
-
-                        //Generate a custom response
-                        JsonObjectBuilder response2 = Json.createObjectBuilder();
-                        response2.add("status", 200);
-                        response2.add("message", "Done");
-                        response2.add("data", arrayBuilder2.build());
-                        writer.print(response2.build());
-                    }else {
-                        //Generate a custom response
-                        JsonObjectBuilder response2 = Json.createObjectBuilder();
-                        response2.add("status", 400);
-                        response2.add("message", "No results match your search");
-                        response2.add("data", arrayBuilder2.build());
-                        writer.print(response2.build());
-                        resp.setStatus(HttpServletResponse.SC_OK);
-                    }*/
             }
             connection.close();
 
@@ -198,12 +167,6 @@ public class ItemServlet extends HttpServlet {
         resp.setContentType("application/json");
         try {
             Connection connection = dataSource.getConnection();
-           /* PreparedStatement pstm = connection.prepareStatement("UPDATE Item SET description=?,qtyOnHand=?,unitPrice=? WHERE code=?");
-            pstm.setObject(1, description);
-            pstm.setObject(2, qtyOnHand);
-            pstm.setObject(3, unitPrice);
-            pstm.setObject(4, code);
-            boolean b = pstm.executeUpdate() > 0;*/
             boolean b = itemBO.updateItem(connection, new ItemDTO(code, description, Integer.parseInt(qtyOnHand), Double.parseDouble(unitPrice)));
 
             if (b) {

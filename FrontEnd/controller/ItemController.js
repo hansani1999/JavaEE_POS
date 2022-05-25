@@ -29,8 +29,8 @@ function updateItem() {
     var itemDTO = {
         code:$("#itemCode").val(),
         description:$("#newItemName").val(),
-        qtyOnHand:$("#price").val(),
-        unitPrice:$("#quantity").val()
+        qtyOnHand:$("#quantity").val(),
+        unitPrice:$("#price").val()
     }
     $.ajax({
         url: "http://localhost:8080/pos/item",
@@ -118,8 +118,8 @@ function bindItemTableEvents() {
 
         $("#itemCode").val(itemCode);
         $("#newItemName").val(itemName);
-        $("#price").val(itemPrice);
         $("#quantity").val(itemQty);
+        $("#price").val(itemPrice);
     });
 
     /*Item Delete starts*/
@@ -157,7 +157,7 @@ function loadAllItems() {
             console.log(typeof resp);
             for (const item of resp.data) {
                 console.log(item.code ,item.description)
-                let row=`<tr><td>${item.code}</td><td>${item.description}</td><td>${item.unitPrice}</td><td>${item.qtyOnHand}</td></tr>`;
+                let row=`<tr><td>${item.code}</td><td>${item.description}</td><td>${item.qtyOnHand}</td><td>${item.unitPrice}</td></tr>`;
                 $("#tblItem").append(row);
             }
             bindItemTableEvents();
@@ -173,9 +173,6 @@ function loadAllItems() {
     return itemIds;
 }*/
 
-function updateQty(orderDetailList) {
-
-}
 
 function clearItemForm(){
     $("#itemCode").val("");
